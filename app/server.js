@@ -5,7 +5,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import router from './routes/routes';
-// import { capitalize } from './helpers';
 
 dotenv.config();
 const app = express();
