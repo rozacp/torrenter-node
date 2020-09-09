@@ -10,14 +10,38 @@ export default class TorrentsRepository {
   // filter torrents
   async filter() {
     const json = await this.xml();
-    return json.rss.channel.item;
+    const torrents = json.rss.channel.item;
+    const results = [];
+
+    torrents.forEach((torrent) => {
+      this.filters().forEach((filter) => {
+        const regex = new RegExp(filter, 'i');
+        const avoid = new RegExp('(.*cam.*)|(.*telesync.*)|(.*hdts.*)|(.*hd-ts.*)', 'i');
+
+        if (regex.test(torrent.title) && !avoid.test(torrent.title)) {
+          results.push(torrent);
+        }
+      });
+    });
+
+    return results;
   }
 
   // parse XML link
   async xml() {
     const res = await fetch(this.rss());
     const xml = await res.text();
+
     return JSON.parse(toJson(xml));
+  }
+
+  // grab qualities
+  filters() {
+    return [
+      // '^the.boys.s([0-9]{2})e([0-9]{2}).*',
+      // '^the.boys.s\\d{2}e\\d{2}.*',
+      '^the.boys.s(\\d{2})e(\\d{2}).*',
+    ];
   }
 
   // grab qualities
