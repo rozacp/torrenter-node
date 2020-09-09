@@ -4,8 +4,8 @@
   "description": "",
   "main": "app/server.js",
   "scripts": {
-    "serve": "cross-env NODE_ENV=dev nodemon --exec babel-node app/server.js",
-    "start": "cross-env NODE_ENV=prod babel-node app/server.js"
+    "serve": "cross-env NODE_ENV=development nodemon --exec babel-node app/server.js",
+    "start": "cross-env NODE_ENV=production babel-node app/server.js"
   },
   "keywords": [],
   "author": "Peter Rožac",
@@ -17,6 +17,7 @@
     "@babel/preset-env": "^7.11.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "morgan": "^1.10.0",
     "node-fetch": "^2.6.0",
     "xml2json": "^0.12.0"
   },

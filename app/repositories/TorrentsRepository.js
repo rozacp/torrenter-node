@@ -28,8 +28,8 @@ export default class TorrentsRepository {
   }
 
   // Format RSS Url
+  // https://www.torrentday.com/t.rss?download;7;34;u=198412;tp=ba86e56103a9f54c17f744680d72b9c4
   rss() {
-    // https://www.torrentday.com/t.rss?download;7;34;u=198412;tp=ba86e56103a9f54c17f744680d72b9c4
     return `https://www.torrentday.com/t.rss?download;${this.qualities()};u=${this.tdUser};tp=${this.tdToken}`;
   }
 }
