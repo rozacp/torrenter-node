@@ -1,6 +1,6 @@
-/*
-  Server
-*/
+/**
+ * Server
+ */
 
 import express from 'express';
 import morgan from 'morgan';

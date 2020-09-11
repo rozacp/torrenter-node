@@ -1,6 +1,6 @@
-/*
-  Helpers
-*/
+/**
+ * Helpers
+ */
 
 // filter for unique
 export const getUnique = (arr, key) => arr.map((e) => e[key])
@@ -9,9 +9,9 @@ export const getUnique = (arr, key) => arr.map((e) => e[key])
   .map((e) => arr[e]);
 
 // capitalise each letter in sentence
-export const capitalize = (str) => {
+export const capitalize = str => {
   if (typeof str !== 'string') {
-    return false;
+    return undefined;
   }
 
   return str.toLowerCase()

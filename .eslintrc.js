@@ -19,5 +19,6 @@ module.exports = {
     'no-console': 0,
     'object-curly-newline': 0,
     'class-methods-use-this': 0,
+    'arrow-parens': 0,
   },
 };

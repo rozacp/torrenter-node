@@ -1,3 +1,7 @@
+/**
+ * Pages Controller
+ */
+
 // import { capitalize } from '../repositories/helpers';
 import TorrentsRepository from '../repositories/TorrentsRepository';
 
