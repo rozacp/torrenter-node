@@ -8,14 +8,14 @@ const formatQualityName = name => name
 
 export default {
   // list all qualities
-  index: (req, res) => res.send({ page: 'get /qualities' }),
+  index: (req, res) => res.json({ page: 'get /qualities' }),
 
   // store new quality
   store: (req, res) => {
     const { name, code, active } = req.body;
     const properName = formatQualityName(name);
 
-    res.send({
+    res.json({
       page: 'post /qualities',
       params: req.params,
       body: req.body,
@@ -36,7 +36,7 @@ export default {
     const { name, code, active } = req.body;
     const properName = name ? formatQualityName(name) : undefined;
 
-    res.send({
+    res.json({
       page: 'put/patch /qualities/id',
       params: req.params,
       body: req.body,
@@ -56,7 +56,7 @@ export default {
   destroy: (req, res) => {
     const { id } = req.params;
 
-    res.send({
+    res.json({
       page: 'delete /qualities/id',
       params: req.params,
       body: req.body,

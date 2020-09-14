@@ -39,12 +39,13 @@ export default class TorrentsRepository {
     return JSON.parse(toJson(xml));
   }
 
-  // grab qualities
+  // grab filters
   filters() {
     return [
       // '^the.boys.s([0-9]{2})e([0-9]{2}).*',
       // '^the.boys.s\\d{2}e\\d{2}.*',
       '^the.boys.s(\\d{2})e(\\d{2}).*',
+      '^strike.s(\\d{2})e(\\d{2}).*',
     ];
   }
 

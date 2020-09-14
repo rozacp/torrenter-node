@@ -20,7 +20,7 @@ const getPatternType = (name, type) => {
 
 export default {
   // list all filters
-  index: (req, res) => res.send({ page: 'get /filters' }),
+  index: (req, res) => res.json({ page: 'get /filters' }),
 
   // store new filter
   store: (req, res) => {
@@ -28,7 +28,7 @@ export default {
     const properName = formatFilterName(name);
     const pattern = getPatternType(properName, type);
 
-    res.send({
+    res.json({
       page: 'post /filters',
       params: req.params,
       body: req.body,
@@ -49,7 +49,7 @@ export default {
     const properName = name ? formatFilterName(name) : undefined;
     const pattern = properName ? getPatternType(properName, type) : undefined;
 
-    res.send({
+    res.json({
       page: 'put/patch /filters/id',
       params: req.params,
       body: req.body,
@@ -68,7 +68,7 @@ export default {
   destroy: (req, res) => {
     const { id } = req.params;
 
-    res.send({
+    res.json({
       page: 'delete /filters/id',
       params: req.params,
       body: req.body,
