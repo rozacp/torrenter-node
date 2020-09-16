@@ -4,21 +4,28 @@
 
 import express from 'express';
 import morgan from 'morgan';
+import helmet from 'helmet';
+import cors from 'cors';
 import dotenv from 'dotenv';
-import router from './routes/routes';
+import api from './routes/api';
+import { auth, notFound, errorHandler } from './middleware';
 
 dotenv.config();
-const app = express();
 const port = process.env.PORT || 3000;
-const env = process.env.NODE_ENV || 'production';
+const app = express();
 
 // middleware
+app.use(morgan('dev'));
+app.use(helmet());
+app.use(cors());
 app.use(express.json());
-if (env === 'development') {
-  app.use(morgan('dev'));
-}
 
 // routes
-app.use(router);
+app.get('/', (req, res) => res.json({ message: '👋👉👌😎' }));
+app.use('/api/v1', auth, api);
 
-app.listen(port, () => console.log(`Server running in ${env} mode on port ${port}!`));
+// no routes matched
+app.use(notFound);
+app.use(errorHandler);
+
+app.listen(port, () => console.log(`Server running in ${process.env.NODE_ENV} mode on port ${port}!`));

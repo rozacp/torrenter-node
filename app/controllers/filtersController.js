@@ -2,7 +2,7 @@
  * Filters Controller
  */
 
-import { capitalize } from '../repositories/helpers';
+import { capitalize } from '../helpers';
 
 const formatFilterName = name => name
   .trim()

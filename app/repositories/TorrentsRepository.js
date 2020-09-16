@@ -45,7 +45,7 @@ export default class TorrentsRepository {
       // '^the.boys.s([0-9]{2})e([0-9]{2}).*',
       // '^the.boys.s\\d{2}e\\d{2}.*',
       '^the.boys.s(\\d{2})e(\\d{2}).*',
-      '^strike.s(\\d{2})e(\\d{2}).*',
+      '^sit.down.shut.up.s(\\d{2})e(\\d{2}).*',
     ];
   }
 
