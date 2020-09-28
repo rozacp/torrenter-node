@@ -2,6 +2,7 @@
  * Filters Controller
  */
 
+import Filter from '../models/Filter';
 import { capitalize } from '../helpers';
 
 const formatFilterName = name => name
@@ -20,61 +21,77 @@ const getPatternType = (name, type) => {
 
 export default {
   // list all filters
-  index: (req, res) => res.json({ page: 'get /filters' }),
+  index: async (req, res, next) => {
+    try {
+      const filters = await Filter.find({});
+
+      res.status(200).json(filters);
+    } catch (err) {
+      next(err);
+    }
+  },
 
   // store new filter
-  store: (req, res) => {
+  store: async (req, res, next) => {
     const { name, type } = req.body;
     const properName = formatFilterName(name);
     const pattern = getPatternType(properName, type);
 
-    res.json({
-      page: 'post /filters',
-      params: req.params,
-      body: req.body,
-      properName,
-      pattern,
-      payload: {
+    try {
+      const filter = await Filter.create({
         name: capitalize(properName),
         pattern,
         type,
-      },
-    });
+      });
+
+      res.status(201).json(filter);
+    } catch (err) {
+      next(err);
+    }
   },
 
   // update existing filter
-  update: (req, res) => {
+  update: async (req, res, next) => {
     const { id } = req.params;
     const { name, type } = req.body;
     const properName = name ? formatFilterName(name) : undefined;
     const pattern = properName ? getPatternType(properName, type) : undefined;
 
-    res.json({
-      page: 'put/patch /filters/id',
-      params: req.params,
-      body: req.body,
-      properName,
-      pattern,
-      payload: {
-        id: Number(id),
-        name: capitalize(properName),
-        pattern,
-        type,
-      },
-    });
+    try {
+      const filter = await Filter.findById(id);
+
+      if (!filter) {
+        res.status(404);
+        throw new Error(`Not Found - ${req.originalUrl}`);
+      }
+
+      filter.name = capitalize(properName);
+      filter.pattern = pattern;
+      filter.type = type;
+
+      await filter.save();
+      await res.status(200).json(filter);
+    } catch (err) {
+      next(err);
+    }
   },
 
   // delete existing filter
-  destroy: (req, res) => {
+  destroy: async (req, res, next) => {
     const { id } = req.params;
 
-    res.json({
-      page: 'delete /filters/id',
-      params: req.params,
-      body: req.body,
-      payload: {
-        id: Number(id),
-      },
-    });
+    try {
+      const filter = await Filter.findById(id);
+
+      if (!filter) {
+        res.status(404);
+        throw new Error(`Not Found - ${req.originalUrl}`);
+      }
+
+      const deleted = await filter.remove();
+      res.status(204).json(deleted);
+    } catch (err) {
+      next(err);
+    }
   },
 };
