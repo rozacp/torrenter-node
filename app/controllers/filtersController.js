@@ -10,22 +10,27 @@ const formatFilterName = name => name
   .replace(/\s\s+/g, ' ')
   .toLowerCase();
 
-const getPatternType = (name, type) => {
+const getPattern = (name, type) => {
   const dottedName = name.replace(/\s/g, '.');
 
   if (type === 'series') {
     return `^${dottedName}.s(\\d{2})e(\\d{2}).*`;
   }
-  return `^${dottedName}.*`;
+
+  if (type === 'movies') {
+    return `^${dottedName}.*`;
+  }
+
+  return undefined;
 };
 
 export default {
   // list all filters
   index: async (req, res, next) => {
     try {
-      const filters = await Filter.find({});
+      const filters = await Filter.find();
 
-      res.status(200).json(filters);
+      res.json(filters);
     } catch (err) {
       next(err);
     }
@@ -34,11 +39,11 @@ export default {
   // store new filter
   store: async (req, res, next) => {
     const { name, type } = req.body;
-    const properName = formatFilterName(name);
-    const pattern = getPatternType(properName, type);
+    const properName = name ? formatFilterName(name) : undefined;
+    const pattern = properName ? getPattern(properName, type) : undefined;
 
     try {
-      const filter = await Filter.create({
+      const filter = await Filter.create({ // if does not exist?
         name: capitalize(properName),
         pattern,
         type,
@@ -46,6 +51,7 @@ export default {
 
       res.status(201).json(filter);
     } catch (err) {
+      res.status(400);
       next(err);
     }
   },
@@ -54,8 +60,8 @@ export default {
   update: async (req, res, next) => {
     const { id } = req.params;
     const { name, type } = req.body;
-    const properName = name ? formatFilterName(name) : undefined;
-    const pattern = properName ? getPatternType(properName, type) : undefined;
+    const properName = name ? capitalize(formatFilterName(name)) : undefined;
+    const pattern = properName ? getPattern(properName, type) : undefined;
 
     try {
       const filter = await Filter.findById(id);
@@ -65,13 +71,20 @@ export default {
         throw new Error(`Not Found - ${req.originalUrl}`);
       }
 
-      filter.name = capitalize(properName);
-      filter.pattern = pattern;
-      filter.type = type;
+      const updated = {
+        name: properName || filter.name,
+        pattern: pattern || filter.pattern,
+        type: type || filter.type,
+      };
 
-      await filter.save();
-      await res.status(200).json(filter);
+      await filter.update(updated, {
+        runValidators: true,
+      });
+
+      res.json(updated);
+      // res.json({ message: 'Filter updated' });
     } catch (err) {
+      res.status(400);
       next(err);
     }
   },
@@ -88,8 +101,8 @@ export default {
         throw new Error(`Not Found - ${req.originalUrl}`);
       }
 
-      const deleted = await filter.remove();
-      res.status(204).json(deleted);
+      await filter.remove();
+      res.json({ message: 'Filter deleted' });
     } catch (err) {
       next(err);
     }
