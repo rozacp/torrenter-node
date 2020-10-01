@@ -12,12 +12,12 @@ const schema = new mongoose.Schema({
   // },
   name: {
     type: String,
-    required: [true, 'name is required'],
+    required: [true, 'Name is required'],
     // unique: false,
   },
   pattern: {
     type: String,
-    required: [true, 'pattern is required'],
+    required: [true, 'Pattern is required'],
   },
   type: {
     type: String,
@@ -25,7 +25,7 @@ const schema = new mongoose.Schema({
       validator: type => ['series', 'movies'].includes(type),
       message: 'Valid options are "series" or "movies"',
     },
-    required: [true, 'type is required'],
+    required: [true, 'Type is required'],
   },
 },
 {

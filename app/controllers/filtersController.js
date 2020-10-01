@@ -64,25 +64,21 @@ export default {
     const pattern = properName ? getPattern(properName, type) : undefined;
 
     try {
-      const filter = await Filter.findById(id);
-
-      if (!filter) {
-        res.status(404);
-        throw new Error(`Not Found - ${req.originalUrl}`);
-      }
-
-      const updated = {
-        name: properName || filter.name,
-        pattern: pattern || filter.pattern,
-        type: type || filter.type,
-      };
-
-      await filter.update(updated, {
+      const filter = await Filter.findByIdAndUpdate(id, {
+        name: properName,
+        pattern,
+        type,
+      },
+      {
         runValidators: true,
       });
 
-      res.json(updated);
-      // res.json({ message: 'Filter updated' });
+      if (!filter) {
+        res.status(404);
+        throw new Error(`Filter Not Found - ${req.originalUrl}`);
+      }
+
+      res.json({ message: 'Filter updated' });
     } catch (err) {
       res.status(400);
       next(err);
@@ -94,14 +90,13 @@ export default {
     const { id } = req.params;
 
     try {
-      const filter = await Filter.findById(id);
+      const filter = await Filter.findByIdAndDelete(id);
 
       if (!filter) {
         res.status(404);
-        throw new Error(`Not Found - ${req.originalUrl}`);
+        throw new Error(`Filter Not Found - ${req.originalUrl}`);
       }
 
-      await filter.remove();
       res.json({ message: 'Filter deleted' });
     } catch (err) {
       next(err);

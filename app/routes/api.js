@@ -11,16 +11,14 @@ const router = Router();
 
 router.get('/test', defaultController.test);
 
-router.route('/qualities(/:id)?')
-  .get(qualitiesController.index)
-  .post(qualitiesController.store)
-  .patch(qualitiesController.update)
-  .delete(qualitiesController.destroy);
+router.get('/qualities', qualitiesController.index);
+router.post('/qualities', qualitiesController.store);
+router.patch('/qualities/:id', qualitiesController.update);
+router.delete('/qualities/:id', qualitiesController.destroy);
 
-router.route('/filters(/:id)?')
-  .get(filtersController.index)
-  .post(filtersController.store)
-  .patch(filtersController.update)
-  .delete(filtersController.destroy);
+router.get('/filters', filtersController.index);
+router.post('/filters', filtersController.store);
+router.patch('/filters/:id', filtersController.update);
+router.delete('/filters/:id', filtersController.destroy);
 
 export default router;
