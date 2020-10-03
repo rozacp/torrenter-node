@@ -3,24 +3,11 @@
  */
 
 import { Router } from 'express';
-import { check, validationResult } from 'express-validator';
+import { check } from 'express-validator';
 import defaultController from '../controllers/defaultController';
 import qualitiesController from '../controllers/qualitiesController';
 import filtersController from '../controllers/filtersController';
-
-const validate = (req, res, next) => {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    const errorMesseges = [];
-    Object.values(errors.mapped()).map(err => errorMesseges.push(`[${err.param}] ${err.msg}`));
-
-    res.status(422);
-    throw new Error(`Validation errors - ${errorMesseges.join(', ')}`);
-  }
-
-  return next();
-};
+import validate from '../validators/validate';
 
 const router = Router();
 
