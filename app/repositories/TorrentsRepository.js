@@ -4,6 +4,8 @@
 
 import fetch from 'node-fetch';
 import { toJson } from 'xml2json';
+import Filter from '../models/Filter';
+import Quality from '../models/Quality';
 
 export default class TorrentsRepository {
   constructor(tdUser, tdToken) {
@@ -13,13 +15,14 @@ export default class TorrentsRepository {
 
   // filter torrents
   async filter() {
+    const filters = await this.filters();
     const json = await this.xml();
     const torrents = json.rss.channel.item;
     const results = [];
 
     torrents.forEach((torrent) => {
-      this.filters().forEach((filter) => {
-        const regex = new RegExp(filter, 'i');
+      filters.forEach((filter) => {
+        const regex = new RegExp(filter.pattern, 'i');
         const avoid = new RegExp('(.*cam.*)|(.*telesync.*)|(.*hdts.*)|(.*hd-ts.*)', 'i');
 
         if (regex.test(torrent.title) && !avoid.test(torrent.title)) {
@@ -33,32 +36,33 @@ export default class TorrentsRepository {
 
   // parse XML link
   async xml() {
-    const res = await fetch(this.rss());
+    const rss = await this.rss();
+    const res = await fetch(rss);
     const xml = await res.text();
 
     return JSON.parse(toJson(xml));
   }
 
   // grab filters
-  filters() {
-    return [
-      // '^the.boys.s([0-9]{2})e([0-9]{2}).*',
-      // '^the.boys.s\\d{2}e\\d{2}.*',
-      '^the.boys.s(\\d{2})e(\\d{2}).*',
-      '^sit.down.shut.up.s(\\d{2})e(\\d{2}).*',
-    ];
+  async filters() {
+    const filters = await Filter.find();
+
+    return filters;
   }
 
   // grab qualities
-  qualities() {
-    const qualities = [7, 34];
+  async qualities() {
+    const codes = [];
+    const qualities = await Quality.find();
+    qualities.map(quality => codes.push(quality.code));
 
-    return qualities.join(';');
+    return codes.join(';');
   }
 
   // Format RSS Url
   // https://www.torrentday.com/t.rss?download;7;34;u=198412;tp=ba86e56103a9f54c17f744680d72b9c4
-  rss() {
-    return `https://www.torrentday.com/t.rss?download;${this.qualities()};u=${this.tdUser};tp=${this.tdToken}`;
+  async rss() {
+    const qualities = await this.qualities();
+    return `https://www.torrentday.com/t.rss?download;${qualities};u=${this.tdUser};tp=${this.tdToken}`;
   }
 }

@@ -43,7 +43,7 @@ export default {
     const pattern = properName ? getPattern(properName, type) : undefined;
 
     try {
-      const filter = await Filter.create({ // if does not exist?
+      const filter = await Filter.create({
         name: capitalize(properName),
         pattern,
         type,
@@ -64,18 +64,23 @@ export default {
     const pattern = properName ? getPattern(properName, type) : undefined;
 
     try {
-      const filter = await Filter.findByIdAndUpdate(id, {
-        name: properName,
-        pattern,
-        type,
-      },
-      {
-        runValidators: true,
-      });
+      if (id.match(/^[0-9a-fA-F]{24}$/)) {
+        const filter = await Filter.findByIdAndUpdate(id, {
+          name: properName,
+          pattern,
+          type,
+        },
+        {
+          runValidators: true,
+        });
 
-      if (!filter) {
-        res.status(404);
-        throw new Error(`Filter Not Found - ${req.originalUrl}`);
+        if (!filter) {
+          res.status(404);
+          throw new Error(`Filter Not Found - ${req.originalUrl}`);
+        }
+      } else {
+        res.status(400);
+        throw new Error(`Invalid Id - ${req.originalUrl}`);
       }
 
       res.json({ message: 'Filter updated' });
@@ -90,11 +95,16 @@ export default {
     const { id } = req.params;
 
     try {
-      const filter = await Filter.findByIdAndDelete(id);
+      if (id.match(/^[0-9a-fA-F]{24}$/)) {
+        const filter = await Filter.findByIdAndDelete(id);
 
-      if (!filter) {
-        res.status(404);
-        throw new Error(`Filter Not Found - ${req.originalUrl}`);
+        if (!filter) {
+          res.status(404);
+          throw new Error(`Filter Not Found - ${req.originalUrl}`);
+        }
+      } else {
+        res.status(400);
+        throw new Error(`Invalid Id - ${req.originalUrl}`);
       }
 
       res.json({ message: 'Filter deleted' });

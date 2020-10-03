@@ -9,7 +9,12 @@ const tdToken = 'ba86e56103a9f54c17f744680d72b9c4';
 const torrents = new TorrentsRepository(tdUser, tdToken);
 
 export default {
-  test: (req, res, next) => {
-    torrents.filter().then((json) => res.json(json)).catch(next);
+  test: async (req, res, next) => {
+    try {
+      const data = await torrents.filter();
+      res.json(data);
+    } catch (err) {
+      next(err);
+    }
   },
 };

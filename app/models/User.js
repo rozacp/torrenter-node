@@ -20,6 +20,14 @@ const schema = new mongoose.Schema({
     type: String,
     require: true,
   },
+  tdUser: {
+    type: String,
+    require: true,
+  },
+  tdToken: {
+    type: String,
+    require: true,
+  },
 },
 {
   timestamps: true,

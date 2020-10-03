@@ -2,32 +2,40 @@
  * Qualities Controller
  */
 
-const formatQualityName = name => name
-  .replace(/\s/g, '')
-  .toLowerCase();
+import Quality from '../models/Quality';
+import { capitalize } from '../helpers';
+
+const formatQualityName = name => capitalize(name.replace(/\s/g, ''));
 
 export default {
   // list all qualities
-  index: (req, res) => res.json({ page: 'get /qualities' }),
+  index: async (req, res, next) => {
+    try {
+      const qualities = await Quality.find();
+
+      res.json(qualities);
+    } catch (err) {
+      next(err);
+    }
+  },
 
   // store new quality
-  store: (req, res) => {
+  store: async (req, res, next) => {
     const { name, code, active } = req.body;
     const properName = formatQualityName(name);
 
-    res.json({
-      page: 'post /qualities',
-      params: req.params,
-      body: req.body,
-      properName,
-      code,
-      active,
-      payload: {
+    try {
+      const quality = await Quality.create({
         name: properName,
         code,
         active,
-      },
-    });
+      });
+
+      return res.status(201).json(quality);
+    } catch (err) {
+      res.status(400);
+      return next(err);
+    }
   },
 
   // update existing quality
